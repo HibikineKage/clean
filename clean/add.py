@@ -7,4 +7,4 @@ from .config import Config
 
 def add_new_config(regexp: str, path: str):
     config = Config()
-    return config.add_regexp_path(path, regexp)
+    return config.add_regexp_path(regexp, path)
