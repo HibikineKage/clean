@@ -1,6 +1,6 @@
 # Clean.py
 
-Glob file sorter
+Glob files sorter
 
 ## Usage
 
