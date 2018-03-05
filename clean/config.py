@@ -4,6 +4,14 @@ config_file_name = '.cleanrc'
 config_dir = Path.home() / config_file_name
 
 
+def is_valid_glob_path(glob_and_path):
+    if not 'path' in glob_and_path:
+        return False
+    if not 'glob' in glob_and_path:
+        return False
+    return True
+
+
 class Config:
     def __init__(self):
         self.config_dir = config_dir
@@ -17,10 +25,13 @@ class Config:
 
         self.load_file()
 
-    def add_regexp_path(self, regexp: str, path: str):
-        self.config['path'].append({'regexp': regexp, 'path': path})
+    def add_glob_path(self, glob: str, path: str):
+        self.config['path'].append({'glob': glob, 'path': path})
         self.save_file()
         return True
+
+    def list_glob_path(self):
+        return [i for i in self.config['path'] if is_valid_glob_path(i)]
 
     def save_file(self):
         with self.config_dir.open(mode='w', encoding='utf=8') as f:

@@ -5,6 +5,6 @@ import click
 from .config import Config
 
 
-def add_new_config(regexp: str, path: str):
+def add_new_config(glob: str, path: str):
     config = Config()
-    return config.add_regexp_path(regexp, path)
+    return config.add_glob_path(glob, path)
