@@ -2,6 +2,7 @@ import click
 from .add import add_new_config
 from .list import list_configs
 from .cwd import show_cwd
+from .move import move
 
 
 @click.group()
@@ -42,6 +43,17 @@ def cwd():
     show_cwd()
 
 
+@click.command()
+@click.option('--silent', 'is_silent', flag_value=True, default=False)
+@click.option('--fake', '-f', 'is_fake', flag_value=True, default=False)
+def run(is_fake, is_silent):
+    """Clean your current directory.
+    """
+
+    move(is_fake, is_silent)
+
+
 cli.add_command(add)
 cli.add_command(list)
 cli.add_command(cwd)
+cli.add_command(run)
