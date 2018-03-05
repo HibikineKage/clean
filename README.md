@@ -2,7 +2,7 @@
 
 Glob file sorter
 
-# Usage
+## Usage
 
 Please type `clean.sh --help`
 
@@ -24,3 +24,7 @@ $ cat ~/.cleanrc
     "path": [{"path": "~/bar", "glob": "foo*.txt"}]
 }
 ```
+
+## License
+
+MIT
