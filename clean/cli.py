@@ -1,5 +1,6 @@
 import click
 from .add import add_new_config
+from .list import list_configs
 
 
 @click.group()
@@ -24,4 +25,13 @@ def add(regexp: str, path: str):
         exit(1)
 
 
+@click.command()
+def list():
+    """Show the list of file move settings.
+    """
+
+    list_configs()
+
+
 cli.add_command(add)
+cli.add_command(list)
