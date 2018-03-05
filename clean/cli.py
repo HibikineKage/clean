@@ -1,6 +1,7 @@
 import click
 from .add import add_new_config
 from .list import list_configs
+from .cwd import show_cwd
 
 
 @click.group()
@@ -33,5 +34,14 @@ def list():
     list_configs()
 
 
+@click.command()
+def cwd():
+    """Show the current working directory.
+    """
+
+    show_cwd()
+
+
 cli.add_command(add)
 cli.add_command(list)
+cli.add_command(cwd)
