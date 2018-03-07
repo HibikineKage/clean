@@ -3,7 +3,7 @@ from .config import Config
 import click
 
 
-def move(is_fake=True, is_silent=False):
+def move(is_fake=True, is_silent=False, is_recursive=False):
     config = Config()
     cwd = Path.cwd()
     for i in config.list_glob_path():

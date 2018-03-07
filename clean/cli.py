@@ -46,11 +46,13 @@ def cwd():
 @click.command()
 @click.option('--silent', 'is_silent', flag_value=True, default=False)
 @click.option('--fake', '-f', 'is_fake', flag_value=True, default=False)
-def run(is_fake, is_silent):
+@click.option(
+    '--recursive', '-r', 'is_recursive', flag_value=True, default=False)
+def run(is_fake, is_silent, is_recursive):
     """Clean your current directory.
     """
 
-    move(is_fake, is_silent)
+    move(is_fake, is_silent, is_recursive)
 
 
 cli.add_command(add)
