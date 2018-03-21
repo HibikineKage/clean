@@ -1,5 +1,6 @@
 import click
 from .add import add_new_config
+from .delete import delete_config
 from .list import list_configs
 from .cwd import show_cwd
 from .move import move
@@ -13,6 +14,7 @@ def cli():
 @click.command()
 @click.argument('regexp')
 @click.argument('path')
+@click.option('')
 def add(regexp: str, path: str):
     """Add new file move setting.
 
@@ -22,6 +24,25 @@ def add(regexp: str, path: str):
     """
     if add_new_config(regexp, path):
         click.echo('Add new setting: {} => {}'.format(regexp, path))
+        exit(0)
+    else:
+        click.echo('Command failed.')
+        exit(1)
+
+
+@click.command()
+@click.argument('id')
+def delete(id: int):
+    """Delete a file move setting.
+
+    Arguments:
+        id {int} -- the setting id
+    """
+    deleted_setting = delete_config(id)
+    if deleted_setting:
+        regexp, path = deleted_setting
+        click.echo('Deleted setting: {} => {}.'.format(regexp, path))
+        exit(0)
     else:
         click.echo('Command failed.')
         exit(1)
@@ -33,6 +54,7 @@ def list():
     """
 
     list_configs()
+    exit(0)
 
 
 @click.command()
@@ -41,6 +63,7 @@ def cwd():
     """
 
     show_cwd()
+    exit(0)
 
 
 @click.command()
@@ -53,6 +76,7 @@ def run(is_fake, is_silent, is_recursive):
     """
 
     move(is_fake, is_silent, is_recursive)
+    exit(0)
 
 
 cli.add_command(add)
