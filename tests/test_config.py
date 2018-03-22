@@ -34,6 +34,16 @@ class TestConfig(TestCase):
         path_list = config.list_glob_path()
         self.assertIn({"glob": "hogehoge", "path": "fugafuga"}, path_list)
 
+    def test_add_same_glob_path(self):
+        """Test same glob path to add a cleanrc will fail
+        """
+        config = Config(config_path=self.test_cleanrc_path)
+        is_success = config.add_glob_path('fuga', 'hoge')
+        self.assertFalse(is_success)
+        config = Config(config_path=self.test_cleanrc_path)
+        path_list = config.list_glob_path()
+        self.assertEqual(1, path_list.count({"glob": "fuga", "path": "hoge"}))
+
     def test_delete_glob_path(self):
         """Test method for Config.delete_glob_path.
         """

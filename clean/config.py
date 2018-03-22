@@ -62,9 +62,15 @@ class Config:
         self.load_file()
 
     def add_glob_path(self, glob: str, path: str) -> bool:
+        if self._is_contain_same_config(glob, path):
+            return False
         self.config['path'].append({'glob': glob, 'path': path})
         self.save_file()
         return True
+
+    def _is_contain_same_config(self, glob: str, path: str) -> bool:
+        return not any(x['path'] == path and x['glob'] == glob
+                       for x in self.config['path'])
 
     def delete_glob_path(self, id: int) -> dict:
         """Delete registered glob and path by id.
