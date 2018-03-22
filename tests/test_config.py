@@ -20,7 +20,6 @@ class TestConfig(TestCase):
     def test_list_glob_path(self):
         """test method for Config.list_glob_path
         """
-
         config = Config(config_path=self.test_cleanrc_path)
         path_list = config.list_glob_path()
         self.assertEqual(path_list, [{"glob": "fuga", "path": "hoge"}])

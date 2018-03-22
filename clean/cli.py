@@ -1,3 +1,6 @@
+"""Console commands.
+"""
+
 import click
 from .add import add_new_config
 from .delete import delete_config
@@ -14,7 +17,6 @@ def cli():
 @click.command()
 @click.argument('regexp')
 @click.argument('path')
-@click.option('')
 def add(regexp: str, path: str):
     """Add new file move setting.
 
@@ -52,7 +54,6 @@ def delete(id: int):
 def list():
     """Show the list of file move settings.
     """
-
     list_configs()
     exit(0)
 
@@ -61,7 +62,6 @@ def list():
 def cwd():
     """Show the current working directory.
     """
-
     show_cwd()
     exit(0)
 
@@ -74,7 +74,6 @@ def cwd():
 def run(is_fake, is_silent, is_recursive):
     """Clean your current directory.
     """
-
     move(is_fake, is_silent, is_recursive)
     exit(0)
 

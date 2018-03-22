@@ -4,16 +4,33 @@
 from pathlib import Path
 import json
 import click
-config_file_name = '.cleanrc'
-default_config_path = Path.home() / config_file_name
+import os
+
+
+class NoConfigFileException(Exception):
+    pass
 
 
 def is_valid_glob_path(glob_and_path):
-    if not 'path' in glob_and_path:
+    if 'path' not in glob_and_path:
         return False
-    if not 'glob' in glob_and_path:
+    if 'glob' not in glob_and_path:
         return False
     return True
+
+
+def get_config_path() -> Path:
+    config_file_name = '.cleanrc'
+    env_config_raw_path = os.getenv('CLEANRC_PATH')
+    if env_config_raw_path is None:
+        default_config_path = Path.home() / config_file_name
+    else:
+        default_config_path = Path(env_config_raw_path)
+        if default_config_path.is_dir():
+            default_config_path /= config_file_name
+        if not default_config_path.is_file():
+            raise NoConfigFileException('{}'.format(str(default_config_path)))
+    return default_config_path
 
 
 class Config:
@@ -24,30 +41,32 @@ class Config:
 
     """
 
-    def __init__(self, config_path=default_config_path):
+    def __init__(self, config_path=None):
         """initialize config class.
 
         Keyword Arguments:
             config_path {Path} -- set config file path (default: {default_config_path})
         """
 
+        if config_path is None:
+            config_path = get_config_path()
         self.config_path = config_path
         if not self.config_path.is_file():
             if self.config_path.exists():
                 click.echo(
                     'Can\'t create file. Same name something is exist. Please check your home\'s {}.'.
-                    format(config_file_name))
+                    format(str(config_path)))
                 exit(1)
             self.create_new_config_file()
 
         self.load_file()
 
-    def add_glob_path(self, glob: str, path: str):
+    def add_glob_path(self, glob: str, path: str) -> bool:
         self.config['path'].append({'glob': glob, 'path': path})
         self.save_file()
         return True
 
-    def delete_glob_path(self, id: int):
+    def delete_glob_path(self, id: int) -> dict:
         """Delete registered glob and path by id.
 
         Arguments:
@@ -61,7 +80,7 @@ class Config:
         self.save_file()
         return deleted_path
 
-    def list_glob_path(self):
+    def list_glob_path(self) -> list:
         return [i for i in self.config['path'] if is_valid_glob_path(i)]
 
     def save_file(self):

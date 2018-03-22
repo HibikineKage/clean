@@ -15,18 +15,22 @@ class TestCli(TestCase):
             with cleanrc_template_path.open('r', encoding='utf_8') as template:
                 f.write(template.read())
         config.config_file_name = test_cleanrc_path
+        self.test_cleanrc_path = test_cleanrc_path
 
     def test_add_config(self):
         runner = CliRunner()
-        runner.invoke(cli.add, ['hogehoge', 'fugafuga'], env={""})
+        runner.invoke(
+            cli.add, ['hogehoge', 'fugafuga'],
+            env={'CLEANRC_PATH': str(self.test_cleanrc_path)})
         c = config.Config()
         path_list = c.list_glob_path()
         self.assertIn({"glob": "hogehoge", "path": "fugafuga"}, path_list)
 
     def test_list_config(self):
         runner = CliRunner()
-        result = runner.invoke(cli.list)
-        self.assertEqual("fuga => hoge", result.output)
+        result = runner.invoke(
+            cli.list, env={'CLEANRC_PATH': str(self.test_cleanrc_path)})
+        self.assertEqual("fuga => hoge\n", result.output)
 
 
 if __name__ == '__main__':
