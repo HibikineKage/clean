@@ -69,8 +69,8 @@ class Config:
         return True
 
     def _is_contain_same_config(self, glob: str, path: str) -> bool:
-        return not any(x['path'] == path and x['glob'] == glob
-                       for x in self.config['path'])
+        return any(x['path'] == path and x['glob'] == glob
+                   for x in self.config['path'])
 
     def delete_glob_path(self, id: int) -> dict:
         """Delete registered glob and path by id.
