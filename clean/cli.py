@@ -33,7 +33,7 @@ def add(regexp: str, path: str):
 
 
 @click.command()
-@click.argument('id')
+@click.argument('id', type=int)
 def delete(id: int):
     """Delete a file move setting.
 
@@ -82,3 +82,4 @@ cli.add_command(add)
 cli.add_command(list)
 cli.add_command(cwd)
 cli.add_command(run)
+cli.add_command(delete)

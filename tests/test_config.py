@@ -1,7 +1,5 @@
-import unittest
 from unittest import TestCase
 from clean.config import Config
-from os import path
 from pathlib import Path
 
 
@@ -10,9 +8,9 @@ class TestConfig(TestCase):
     """
 
     def setUp(self):
-        current_dir = Path(__file__).parent.resolve()
-        self.test_cleanrc_path = current_dir / '.cleanrc'
-        cleanrc_template_path = current_dir / '.cleanrc.template'
+        current_dir = Path(__file__).parent.resolve()  # type: Path
+        self.test_cleanrc_path = current_dir / '.cleanrc'  # type: Path
+        cleanrc_template_path = current_dir / '.cleanrc.template'  # type: Path
         with self.test_cleanrc_path.open('w', encoding='utf_8') as f:
             with cleanrc_template_path.open('r', encoding='utf_8') as template:
                 f.write(template.read())

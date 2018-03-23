@@ -8,5 +8,5 @@ def list_configs():
     if len(glob_paths) == 0:
         click.echo(
             'No path settings. To add new setting, please use "clean add".')
-    for i in config.list_glob_path():
-        click.echo('{} => {}'.format(i['glob'], i['path']))
+    for i in enumerate(config.list_glob_path()):
+        click.echo('[{}] {} => {}'.format(i[0], i[1]['glob'], i[1]['path']))
