@@ -51,7 +51,33 @@ def delete(id: int):
 
 
 @click.command()
+@click.argument('id', type=int)
+def rm(id: int):
+    """Delete a file move setting.
+
+    Arguments:
+        id {int} -- the setting id
+    """
+    deleted_setting = delete_config(id)
+    if deleted_setting:
+        regexp, path = deleted_setting
+        click.echo('Deleted setting: {} => {}.'.format(regexp, path))
+        exit(0)
+    else:
+        click.echo('Command failed.')
+        exit(1)
+
+
+@click.command()
 def list():
+    """Show the list of file move settings.
+    """
+    list_configs()
+    exit(0)
+
+
+@click.command()
+def ls():
     """Show the list of file move settings.
     """
     list_configs()
@@ -79,7 +105,9 @@ def run(is_fake, is_silent, is_recursive):
 
 
 cli.add_command(add)
+cli.add_command(ls)
 cli.add_command(list)
 cli.add_command(cwd)
 cli.add_command(run)
 cli.add_command(delete)
+cli.add_command(rm)
