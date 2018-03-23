@@ -79,9 +79,24 @@ class Config:
             id {int} -- the glob and path's id which you want to delete.
 
         Returns:
-            {{'glob': string, 'path': string}} -- the setting you destroy.
+            {{'glob': string, 'path': string}|None} -- the setting you destroy.
 
         """
+        # 配列が空でないかどうかチェック
+        if not self.config['path']:
+            click.echo('There is no path settings. ' +
+                       'Please add a path setting by "add" command.')
+            return None
+        # 配列の添え字が存在するかどうかチェック
+        if 0 > id:
+            click.echo(
+                'Please input 0 or positive id. The max id is {}.'.format(
+                    len(self.config['path'])))
+        if len(self.config['path']) <= id:
+            click.echo('The id is too big. Please input 0 <= id < {}.'.format(
+                len(self.config['path'])))
+            return None
+
         deleted_path = self.config['path'].pop(id)
         self.save_file()
         return deleted_path
