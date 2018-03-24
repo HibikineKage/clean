@@ -1,31 +1,33 @@
-"""Console commands.
-"""
+"""Console commands."""
 
 import click
+
 from .add import add_new_config
+from .cwd import show_cwd
 from .delete import delete_config
 from .list import list_configs
-from .cwd import show_cwd
 from .move import move
 
 
 @click.group()
 def cli():
+    """Root command group."""
     pass
 
 
 @click.command()
-@click.argument('regexp')
+@click.argument('glob')
 @click.argument('path')
-def add(regexp: str, path: str):
+@click.option('--reg/--glob', default=False, help="use regular expressions")
+def add(glob: str, path: str, reg: bool):
     """Add new file move setting.
 
     Arguments:
-        regexp {str} -- file matcher
+        glob(RegExp) {str} -- file matcher
         path {str} -- where to move the file
     """
-    if add_new_config(regexp, path):
-        click.echo('Add new setting: {} => {}'.format(regexp, path))
+    if add_new_config(glob, path):
+        click.echo('Add new setting: {} => {}'.format(glob, path))
         exit(0)
     else:
         click.echo('Command failed.')
@@ -70,24 +72,21 @@ def rm(id: int):
 
 @click.command()
 def list():
-    """Show the list of file move settings.
-    """
+    """Show the list of file move settings."""
     list_configs()
     exit(0)
 
 
 @click.command()
 def ls():
-    """Show the list of file move settings.
-    """
+    """Show the list of file move settings."""
     list_configs()
     exit(0)
 
 
 @click.command()
 def cwd():
-    """Show the current working directory.
-    """
+    """Show the current working directory."""
     show_cwd()
     exit(0)
 
@@ -97,9 +96,8 @@ def cwd():
 @click.option('--fake', '-f', 'is_fake', flag_value=True, default=False)
 @click.option(
     '--recursive', '-r', 'is_recursive', flag_value=True, default=False)
-def run(is_fake, is_silent, is_recursive):
-    """Clean your current directory.
-    """
+def run(is_fake: bool, is_silent: bool, is_recursive: bool):
+    """Clean your current directory."""
     move(is_fake, is_silent, is_recursive)
     exit(0)
 

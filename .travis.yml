@@ -10,5 +10,6 @@ install:
 script:
   - python -m unittest
   - coverage run --source=clean setup.py test
+  - flake8 clean
 after_success:
   - coveralls

@@ -1,9 +1,14 @@
+"""Run file moving."""
+
 from pathlib import Path
-from .config import Config
+
 import click
+
+from .config import Config
 
 
 def move(is_fake=True, is_silent=False, is_recursive=False):
+    """Move files as config setting."""
     config = Config()
     cwd = Path.cwd()
     for i in config.list_glob_path():

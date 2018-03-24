@@ -1,8 +1,12 @@
+"""Listing config files."""
+
 import click
+
 from .config import Config
 
 
 def list_configs():
+    """Show the path config lists to command line."""
     config = Config()
     glob_paths = config.list_glob_path()
     if len(glob_paths) == 0:

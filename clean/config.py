@@ -1,17 +1,20 @@
-"""Config file manager.
-"""
+"""Config file manager."""
 
-from pathlib import Path
 import json
-import click
 import os
+from pathlib import Path
+
+import click
 
 
 class NoConfigFileException(Exception):
+    """this exception throws If the config file found."""
+
     pass
 
 
 def is_valid_glob_path(glob_and_path):
+    """Check config file is valid format."""
     if 'path' not in glob_and_path:
         return False
     if 'glob' not in glob_and_path:
@@ -20,6 +23,7 @@ def is_valid_glob_path(glob_and_path):
 
 
 def get_config_path() -> Path:
+    """Get config file path by environment variable or default path."""
     config_file_name = '.cleanrc'
     env_config_raw_path = os.getenv('CLEANRC_PATH')
     if env_config_raw_path is None:
@@ -33,7 +37,7 @@ def get_config_path() -> Path:
     return default_config_path
 
 
-class Config:
+class Config(object):
     """Config file manager class.
 
     Returns:
@@ -42,30 +46,31 @@ class Config:
     """
 
     def __init__(self, config_path=None):
-        """initialize config class.
+        """Initialize config class.
 
         Keyword Arguments:
-            config_path {Path} -- set config file path (default: {default_config_path})
+            config_path {Path} -- set config file path
+                                  (default: {default_config_path})
         """
-
         if config_path is None:
             config_path = get_config_path()
         self.config_path = config_path
         if not self.config_path.is_file():
             if self.config_path.exists():
                 click.echo(
-                    'Can\'t create file. Same name something is exist. Please check your home\'s {}.'.
-                    format(str(config_path)))
+                    'Can\'t create file. Same name something is exist. ' +
+                    'Please check your home\'s {}.'.format(str(config_path)))
                 exit(1)
-            self.create_new_config_file()
+            self._create_new_config_file()
 
-        self.load_file()
+        self._load_file()
 
     def add_glob_path(self, glob: str, path: str) -> bool:
+        """Add new glob path to config file."""
         if self._is_contain_same_config(glob, path):
             return False
         self.config['path'].append({'glob': glob, 'path': path})
-        self.save_file()
+        self._save_file()
         return True
 
     def _is_contain_same_config(self, glob: str, path: str) -> bool:
@@ -98,25 +103,27 @@ class Config:
             return None
 
         deleted_path = self.config['path'].pop(id)
-        self.save_file()
+        self._save_file()
         return deleted_path
 
     def list_glob_path(self) -> list:
+        """Return a list of path configs."""
         return [i for i in self.config['path'] if is_valid_glob_path(i)]
 
-    def save_file(self):
+    def _save_file(self):
         with self.config_path.open(mode='w', encoding='utf_8') as f:
             f.write(json.dumps(self.config))
 
-    def create_new_config_file(self):
+    def _create_new_config_file(self):
         with self.config_path.open(mode='w', encoding='utf_8') as f:
             self.config = {'path': []}
             f.write(json.dumps(self.config))
 
-    def get_config(self):
+    def get_config(self) -> dict:
+        """Get config dictionary."""
         return self.config
 
-    def load_file(self):
+    def _load_file(self):
         with self.config_path.open(encoding='utf_8') as f:
             config_text = f.read()
             self.config = json.loads(config_text)
