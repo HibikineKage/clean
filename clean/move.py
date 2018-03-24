@@ -1,5 +1,6 @@
 """Run file moving."""
 
+import glob
 from pathlib import Path
 
 import click
@@ -10,10 +11,18 @@ from .config import Config
 def move(is_fake=True, is_silent=False, is_recursive=False):
     """Move files as config setting."""
     config = Config()
-    cwd = Path.cwd()
     for i in config.list_glob_path():
         move_into = Path(i['path'])
-        for file in cwd.glob(i['glob']):
+        if move_into.exists():
+            if not move_into.is_dir():
+                click.echo(
+                    '{} already exists. The file move setting will ignore.'.
+                    format(str(move_into)))
+                break
+        else:
+            move_into.mkdir(parents=True)
+
+        for file in [Path(x) for x in glob.glob(i['glob'])]:
             file_name = file.name
             move_to = move_into / file_name
             if (move_to.exists()):
