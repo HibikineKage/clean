@@ -1,0 +1,4 @@
+[flake8]
+max-complexity = 10
+exclude = .git,__pycache__,.mypy_cache,.config,.vscode
+ignore = D401, H306

@@ -1,5 +1,4 @@
 """Clean.py File Sorter."""
-import click
 from clean.cli import cli
 
 if __name__ == '__main__':
