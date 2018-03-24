@@ -3,5 +3,7 @@
   "python.linting.pep8Enabled": true,
   "python.linting.mypyEnabled": true,
   "python.linting.enabled": true,
-  "python.linting.pylintEnabled": true
+  "python.linting.pylintEnabled": true,
+  "travis.repository": "clean-py",
+  "travis.username": "HibikineKage"
 }
