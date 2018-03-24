@@ -1,5 +1,7 @@
 # Clean.py
 
+[![Build Status](https://travis-ci.org/HibikineKage/clean.svg?branch=master)](https://travis-ci.org/HibikineKage/clean) [![Coverage Status](https://coveralls.io/repos/github/HibikineKage/clean/badge.svg?branch=master)](https://coveralls.io/github/HibikineKage/clean?branch=master)
+
 Glob files sorter
 
 ## Usage
