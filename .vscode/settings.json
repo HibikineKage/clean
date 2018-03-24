@@ -4,6 +4,6 @@
   "python.linting.mypyEnabled": true,
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
-  "travis.repository": "clean-py",
+  "travis.repository": "clean",
   "travis.username": "HibikineKage"
 }

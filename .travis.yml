@@ -5,7 +5,7 @@ python:
 # command to install dependencies
 install:
   - python setup.py install
-  - pip install coveralls flake8-docstrings flake8-import-order hacking
+  - pip install coveralls flake8-docstrings flake8-import-order hacking mccabe
 # command to run tests
 script:
   - python -m unittest
