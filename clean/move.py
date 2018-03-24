@@ -8,7 +8,9 @@ import click
 from .config import Config
 
 
-def move(is_fake=True, is_silent=False, is_recursive=False):
+def move(is_fake: bool = True,
+         is_silent: bool = False,
+         is_recursive: bool = False):
     """Move files as config setting."""
     config = Config()
     for i in config.list_glob_path():
@@ -22,10 +24,12 @@ def move(is_fake=True, is_silent=False, is_recursive=False):
         else:
             move_into.mkdir(parents=True)
 
-        for file in [Path(x) for x in glob.glob(i['glob'])]:
+        for file in [
+                Path(x) for x in glob.glob(i['glob'], recursive=is_recursive)
+        ]:
             file_name = file.name
             move_to = move_into / file_name
-            if (move_to.exists()):
+            if move_to.exists():
                 click.echo('{} already exists. The file will not move.'.format(
                     str(move_to)))
                 continue
