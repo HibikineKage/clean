@@ -16,6 +16,7 @@ class TestCli(TestCase):
                 f.write(template.read())
         config.config_file_name = test_cleanrc_path
         self.test_cleanrc_path = test_cleanrc_path
+        self.current_dir = current_dir
         self.env = {
             'CLEANRC_PATH': str(self.test_cleanrc_path)
         }  # type: dict[str, str]
@@ -52,10 +53,36 @@ class TestCli(TestCase):
         path_list = c.list_glob_path()  # type: list[dict[str, str]]
         index = path_list.index(test_value)
         runner = CliRunner()
-        r = runner.invoke(cli.delete, [str(index)], env=self.env)
+        runner.invoke(cli.delete, [str(index)], env=self.env)
         c = config.Config(config_path=self.test_cleanrc_path)
         path_list = c.list_glob_path()
         self.assertNotIn({"glob": "fuga", "path": "hoge"}, path_list)
+
+    def test_move(self):
+        test_from_dir = self.current_dir / 'test_from_dir'  # type: Path
+        test_to_dir = self.current_dir / 'test_to_dir'  # type: Path
+        # Remove directory and remake
+        if test_from_dir.exists():
+            test_from_dir.rmdir()
+        test_from_dir.mkdir()
+        if test_to_dir.exists():
+            for file in test_to_dir.glob('*'):
+                file.unlink()
+            test_to_dir.rmdir()
+        # Initialize test files
+        test_file_names = {'foo', 'bar'}
+        for name in test_file_names:
+            (test_from_dir / name).touch()
+        test_value = {
+            "glob": str(test_from_dir) + '/*',
+            "path": str(test_to_dir)
+        }
+        runner = CliRunner()
+        runner.invoke(
+            cli.add, [test_value['glob'], test_value['path']], env=self.env)
+        runner.invoke(cli.run, env=self.env)
+        files = test_to_dir.glob('*')
+        self.assertEqual(test_file_names, {str(x.name) for x in files})
 
 
 if __name__ == '__main__':
