@@ -45,7 +45,7 @@ class Config(object):
 
     """
 
-    def __init__(self, config_path=None):
+    def __init__(self, config_path: Path = None):
         """Initialize config class.
 
         Keyword Arguments:
