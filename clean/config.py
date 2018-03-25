@@ -6,6 +6,9 @@ from pathlib import Path
 
 import click
 
+from .updates.updator import need_update
+from .updates.updator import update_config
+
 
 class NoConfigFileException(Exception):
     """this exception throws If the config file found."""
@@ -65,11 +68,16 @@ class Config(object):
 
         self._load_file()
 
-    def add_glob_path(self, glob: str, path: str) -> bool:
+    def add_glob_path(self, glob: str, path: str,
+                      enable_meta_tag: bool = True) -> bool:
         """Add new glob path to config file."""
         if self._is_contain_same_config(glob, path):
             return False
-        self.config['path'].append({'glob': glob, 'path': path})
+        self.config['path'].append({
+            'glob': glob,
+            'path': path,
+            'use_meta_tag': enable_meta_tag
+        })
         self._save_file()
         return True
 
@@ -123,7 +131,18 @@ class Config(object):
         """Get config dictionary."""
         return self.config
 
+    def _back_up_file(self):
+        with self.config_path.open(encoding='utf_8') as f:
+            with (self.config_path.parent /
+                  (self.config_path.name + '.bk')).open(
+                      mode='w', encoding='utf_8') as g:
+                g.write(f.read())
+
     def _load_file(self):
         with self.config_path.open(encoding='utf_8') as f:
             config_text = f.read()
-            self.config = json.loads(config_text)
+        self.config = json.loads(config_text)
+        if need_update(self.config):
+            self._back_up_file()
+            update_config(self.config)
+            self._save_file()

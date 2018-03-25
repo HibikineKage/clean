@@ -25,6 +25,11 @@ class TestCli(unittest.TestCase):
         self.env = {
             'CLEANRC_PATH': str(self.test_cleanrc_path)
         }  # type: dict[str, str]
+        self.initialPath = {
+            "glob": "fuga",
+            "path": "hoge",
+            "use_meta_tag": False
+        }
 
     def test_add_config(self):
         """Test add command."""
@@ -32,30 +37,38 @@ class TestCli(unittest.TestCase):
         runner.invoke(cli.add, ['hogehoge', 'fugafuga'], env=self.env)
         c = config.Config(config_path=self.test_cleanrc_path)
         path_list = c.list_glob_path()
-        self.assertIn({"glob": "hogehoge", "path": "fugafuga"}, path_list)
+        self.assertIn({
+            "glob": "hogehoge",
+            "path": "fugafuga",
+            "use_meta_tag": True
+        }, path_list)
 
     def test_add_same_config(self):
         """Cannot add same path config to a cleanrc."""
         c = config.Config(config_path=self.test_cleanrc_path)
         path_list = c.list_glob_path()
-        self.assertEqual(path_list.count({"glob": "fuga", "path": "hoge"}), 1)
+        self.assertEqual(path_list.count(self.initialPath), 1)
 
         runner = CliRunner()
         runner.invoke(cli.add, ['fuga', 'hoge'], env=self.env)
 
         c = config.Config(config_path=self.test_cleanrc_path)
         path_list = c.list_glob_path()
-        self.assertEqual(path_list.count({"glob": "fuga", "path": "hoge"}), 1)
+        self.assertEqual(path_list.count(self.initialPath), 1)
 
     def test_list_config(self):
         """List all configs."""
         runner = CliRunner()
         result = runner.invoke(cli.list, env=self.env)
-        self.assertEqual("[0] fuga => hoge\n", result.output)
+        self.assertEqual("[0] fuga => hoge \n", result.output)
 
     def test_delete_config(self):
         """Delete a config."""
-        test_value = {"glob": "fuga", "path": "hoge"}  # type: dict[str, str]
+        test_value = {
+            "glob": "fuga",
+            "path": "hoge",
+            "use_meta_tag": False
+        }  # type: dict[str, str]
         c = config.Config(config_path=self.test_cleanrc_path)  # type: Config
         path_list = c.list_glob_path()  # type: list[dict[str, str]]
         index = path_list.index(test_value)
@@ -63,7 +76,7 @@ class TestCli(unittest.TestCase):
         runner.invoke(cli.delete, [str(index)], env=self.env)
         c = config.Config(config_path=self.test_cleanrc_path)
         path_list = c.list_glob_path()
-        self.assertNotIn({"glob": "fuga", "path": "hoge"}, path_list)
+        self.assertNotIn(test_value, path_list)
 
     def test_move(self):
         """Run cleaning."""
@@ -71,6 +84,8 @@ class TestCli(unittest.TestCase):
         test_to_dir = self.current_dir / 'test_to_dir'  # type: Path
         # Remove directory and remake
         if test_from_dir.exists():
+            for file in test_from_dir.glob('*'):
+                file.unlink()
             test_from_dir.rmdir()
         test_from_dir.mkdir()
         if test_to_dir.exists():

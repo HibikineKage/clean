@@ -17,12 +17,17 @@ class TestConfig(TestCase):
         with self.test_cleanrc_path.open('w', encoding='utf_8') as f:
             with cleanrc_template_path.open('r', encoding='utf_8') as template:
                 f.write(template.read())
+        self.initialConfig = {
+            "glob": "fuga",
+            "path": "hoge",
+            "use_meta_tag": False
+        }
 
     def test_list_glob_path(self):
         """Test method for Config.list_glob_path."""
         config = Config(config_path=self.test_cleanrc_path)
         path_list = config.list_glob_path()
-        self.assertEqual(path_list, [{"glob": "fuga", "path": "hoge"}])
+        self.assertEqual(path_list, [self.initialConfig])
 
     def test_add_glob_path(self):
         """Test method for Config.add_glob_path."""
@@ -31,7 +36,11 @@ class TestConfig(TestCase):
         self.assertTrue(is_success)
         config = Config(config_path=self.test_cleanrc_path)
         path_list = config.list_glob_path()
-        self.assertIn({"glob": "hogehoge", "path": "fugafuga"}, path_list)
+        self.assertIn({
+            "glob": "hogehoge",
+            "path": "fugafuga",
+            "use_meta_tag": True
+        }, path_list)
 
     def test_add_same_glob_path(self):
         """Test same glob path to add a cleanrc will fail."""
@@ -40,16 +49,16 @@ class TestConfig(TestCase):
         self.assertFalse(is_success)
         config = Config(config_path=self.test_cleanrc_path)
         path_list = config.list_glob_path()
-        self.assertEqual(1, path_list.count({"glob": "fuga", "path": "hoge"}))
+        self.assertEqual(1, path_list.count(self.initialConfig))
 
     def test_delete_glob_path(self):
         """Test method for Config.delete_glob_path."""
         config = Config(config_path=self.test_cleanrc_path)
         deleted_config = config.delete_glob_path(0)
-        self.assertEqual(deleted_config, {"glob": "fuga", "path": "hoge"})
+        self.assertEqual(deleted_config, self.initialConfig)
         config = Config(config_path=self.test_cleanrc_path)
         path_list = config.list_glob_path()
-        self.assertNotIn({"glob": "fuga", "path": "hoge"}, path_list)
+        self.assertNotIn(self.initialConfig, path_list)
 
 
 if __name__ == '__main__':

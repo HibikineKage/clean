@@ -1,3 +1,1 @@
-{
-  "path": [{"glob": "fuga", "path": "hoge"}]
-}
+{"path": [{"glob": "fuga", "path": "hoge", "use_meta_tag": false}]}
