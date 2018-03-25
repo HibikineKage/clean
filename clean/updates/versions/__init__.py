@@ -1,1 +1,1 @@
-"""Version management package"""
+"""Version management package."""

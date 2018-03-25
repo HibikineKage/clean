@@ -8,8 +8,10 @@ class Version(metaclass=ABCMeta):
 
     @abstractmethod
     def up(self, config: dict):
+        """Upgrade config file."""
         pass
 
     @abstractmethod
     def down(self, config: dict):
+        """Downgrade config file."""
         pass

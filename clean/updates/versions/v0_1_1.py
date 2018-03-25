@@ -1,4 +1,4 @@
-"""0.1.1 Update"""
+"""0.1.1 Update."""
 from .version import Version
 
 
@@ -15,12 +15,14 @@ def _downgrade_path(path_config: dict) -> dict:
 
 
 class V0_1_1(Version):
-    """Version 0.1.1 Update"""
+    """Version 0.1.1 Update."""
 
     def up(self, config: dict) -> dict:
+        """Upgrade config file."""
         config['path'] = [_update_path(x) for x in config['path']]
         return config
 
     def down(self, config: dict) -> dict:
+        """Downgrade config file."""
         config['path'] = [_downgrade_path(x) for x in config['path']]
         return config

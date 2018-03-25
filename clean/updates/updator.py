@@ -1,7 +1,7 @@
 """Manage config file updating."""
-from pathlib import Path
-from importlib import import_module
 import inspect
+from importlib import import_module
+from pathlib import Path
 
 
 def _version_value(version_name):
@@ -47,6 +47,7 @@ def update_config(config: dict):
     apply_classes = [x[1] for x in version_classes if config_version < x[0]]
     for version in apply_classes:
         config = version().up(config)
+    config['version'] = _version_tuple_to_value(version_classes[-1][0])
     return config
 
 

@@ -1,9 +1,11 @@
 """Cli tests."""
 import unittest
+from os import utime
 from pathlib import Path
 
 from clean import cli
 from clean import config
+from clean.pathutil import rm_recursive
 
 from click.testing import CliRunner
 
@@ -83,15 +85,9 @@ class TestCli(unittest.TestCase):
         test_from_dir = self.current_dir / 'test_from_dir'  # type: Path
         test_to_dir = self.current_dir / 'test_to_dir'  # type: Path
         # Remove directory and remake
-        if test_from_dir.exists():
-            for file in test_from_dir.glob('*'):
-                file.unlink()
-            test_from_dir.rmdir()
+        rm_recursive(test_from_dir)
         test_from_dir.mkdir()
-        if test_to_dir.exists():
-            for file in test_to_dir.glob('*'):
-                file.unlink()
-            test_to_dir.rmdir()
+        rm_recursive(test_to_dir)
         # Initialize test files
         test_file_names = {'foo', 'bar'}
         for name in test_file_names:
@@ -106,6 +102,37 @@ class TestCli(unittest.TestCase):
         runner.invoke(cli.run, env=self.env)
         files = test_to_dir.glob('*')
         self.assertEqual(test_file_names, {str(x.name) for x in files})
+
+    def test_meta_tag(self):
+        """Use meta tag."""
+        test_from_dir = self.current_dir / 'test_from_dir'  # type: Path
+        test_to_dir = self.current_dir / 'test_to_dir'
+        rm_recursive(test_from_dir)
+        test_from_dir.mkdir()
+        rm_recursive(test_to_dir)
+        # Create test files
+        test_files = [(1520780400, 'foo'), (1521039600, 'bar')]
+        for data in test_files:
+            file_path = test_from_dir / data[1]
+            file_path.touch()
+            # Set file update time
+            utime(str(file_path), (data[0], data[0]))
+        cleanrc = ('''
+                {{"path": [
+                    {{"path": "{}", "glob": "{}", "use_meta_tag": true}}
+                ]}}''').format(
+            str(test_to_dir) + '/<YEAR><MONTH><DAY><HOUR><MINUTE><SECOND>',
+            str(test_from_dir) + '/*')
+        with self.test_cleanrc_path.open('w', encoding="utf_8") as f:
+            f.write(cleanrc)
+        runner = CliRunner()
+        result = runner.invoke(cli.run, env=self.env)
+        files = [x for x in test_to_dir.glob('**/*') if x.is_file()]
+        self.assertEqual({
+            str(test_to_dir) + '/20180312000000/foo',
+            str(test_to_dir) + '/20180315000000/bar'
+        }, {str(x)
+            for x in files})
 
 
 if __name__ == '__main__':
