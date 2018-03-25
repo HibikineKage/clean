@@ -125,6 +125,7 @@ class TestCli(unittest.TestCase):
             str(test_from_dir) + '/*')
         with self.test_cleanrc_path.open('w', encoding="utf_8") as f:
             f.write(cleanrc)
+        # Run!!!!
         runner = CliRunner()
         result = runner.invoke(cli.run, env=self.env)
         files = [x for x in test_to_dir.glob('**/*') if x.is_file()]
